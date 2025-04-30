@@ -1,28 +1,22 @@
+#include <mach/mach.h>
+#include <mach/mach_host.h>
 #include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
 
 int main() {
-    long freie_seiten = sysconf(_SC_AVPHYS_PAGES);
-    long seiten_groesse = sysconf(_SC_PAGE_SIZE);
+    mach_msg_type_number_t count = HOST_VM_INFO_COUNT;
+    vm_statistics64_data_t vm_info;
+    kern_return_t kr = host_statistics64(mach_host_self(), HOST_VM_INFO, (host_info64_t)&vm_info, &count);
 
-    // Fehlerprüfung
-    if (freie_seiten == -1 || seiten_groesse == -1) {
-        perror("Fehler bei sysconf");
+    if (kr != KERN_SUCCESS) {
+        printf("Fehler beim Abrufen der Speicherinformationen.\n");
         return 1;
     }
 
-    long freier_speicher = (freie_seiten * seiten_groesse) / (1024 * 1024); // MB
-    printf("Freier Speicher: %ld MB\n", freier_speicher);
+    long freie_seiten = vm_info.free_count;
+    long seiten_groesse = vm_kernel_page_size;
+    long freier_speicher = freie_seiten * seiten_groesse;
 
-    // Speichergrenze (Standard 500 MB)
-    long grenze = 500;
-    char *env_grenze = getenv("SPEICHERGRENZE");
-    if (env_grenze) {
-        grenze = atol(env_grenze);
-    }
+    printf("Freier Speicher: %ld Bytes\n", freier_speicher);
 
-    if (freier_speicher < grenze) { // Warnung bei zu wenig Speicher
-        printf("ACHTUNG: Zu wenig Speicher!\n");
-        return 1; // Fehlercode fürs Bash-Skript
-    }
+    return 0;
+}
