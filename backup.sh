@@ -1,5 +1,5 @@
 #!/bin/bash
-
+LOG_FILE="$HOME/backup.log"
 # 1. PRÜFE SPEICHER (mit C-Programm)
 /path/to/memory_monitor || {
     echo "$(date) - Backup abgebrochen: Zu wenig RAM!" >> /var/log/backup.log
