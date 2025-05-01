@@ -3,8 +3,9 @@
 #include <mach/mach_host.h>
 #include <stdio.h>
 
+#define MIN_RAM 524288000 // 500 MB in Bytes
+
 int main() {
-    // Datenstruktur, um Speicherinformationen zu speichern
     mach_msg_type_number_t count = HOST_VM_INFO_COUNT;
     vm_statistics64_data_t vm_info;
     kern_return_t kr;
@@ -18,11 +19,15 @@ int main() {
 
     // Berechnung des freien Speichers
     long freie_seiten = vm_info.free_count;
-    long seiten_groesse = vm_kernel_page_size; // Größe einer Seite in Bytes
+    long seiten_groesse = vm_kernel_page_size;
     long freier_speicher = freie_seiten * seiten_groesse;
 
-    // Ausgabe des freien Speichers
-    printf("Freier Speicher: %ld Bytes\n", freier_speicher);
+    // Prüfung gegen Mindestanforderung
+    if (freier_speicher < MIN_RAM) {
+        printf("Zu wenig freier Speicher: %ld Bytes (benötigt: %d Bytes)\n", freier_speicher, MIN_RAM);
+        return 1;
+    }
 
+    printf("Freier Speicher: %ld Bytes\n", freier_speicher);
     return 0;
 }
