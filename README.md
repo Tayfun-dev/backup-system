@@ -36,14 +36,11 @@ Hier geht's darum, den freien Speicher zu checken und ein Backup deiner wichtige
 Kompiliere zuerst das C-Programm:
 ```bash
 gcc memory_monitor.c -o memory_monitor
-39| gcc memory_monitor.c -o memory_monitor
-40| ```
-41| 
-42| Führe dann das Programm aus, um den freien Speicher zu prüfen:
-43| ```bash
-44| ./memory_monitor
-45| ```
-46| 
+ ```
+ Führe dann das Programm aus, um den freien Speicher zu prüfen:
+ ```bash
+ ./memory_monitor
+ ```
 47| ### 2. **Backup-Skript ausführen**
 48| Stelle sicher, dass das Bash-Skript ausführbar ist:
 49| ```bash
